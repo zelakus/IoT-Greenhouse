@@ -21,8 +21,9 @@
                 moist = 1024;
             }
 
+            moist -= 600;
             //Convertion
-            moist = 100*(1024-moist)/1024;
+            moist = 100*(424-moist)/424;
             if (moist < 1)
             {
                 moist = 1;
