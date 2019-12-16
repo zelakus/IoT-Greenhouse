@@ -7,10 +7,17 @@ const app = express();
 let port = 80;
 
 global.Sensors = {
-    'sicaklik': 0,
-    'hava_nemi': 99,
-    'toprak_nemi': 99,
+    'sicaklik': 23,
+    'hava_nemi': 95,
+    'toprak_nemi': 90,
     'isik': 0
+};
+
+global.SensorHas = {
+    'sicaklik': true,
+    'hava_nemi': true,
+    'toprak_nemi': true,
+    'isik': false
 };
 
 global.Results = {
@@ -29,19 +36,12 @@ app.use(express.static('public'));
 
 api.Init(app);
 app.post('/login', (req, res) => {
-    //res.send("nah login");
-    console.log(req.body);
     res.sendStatus(200);
 });
 
 app.listen(port, () =>
     console.log(`Listening on port ${port}!`),
 );
-fuzzy.Calculate();
-/*
 
-app.get(‘*’, function(req, res){
-res.sendFile(__dirname+’/public/error.html’);
-}
-
-*/
+//fuzzy.Calculate();
+//console.log(Results);

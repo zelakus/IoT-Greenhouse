@@ -21,7 +21,9 @@
                 temp = 49;
             }
 
+            console.log('sicaklik: ' + temp);
             global.Sensors['sicaklik'] = temp;
+            global.SensorHas['sicaklik'] = true;
             res.json({
                 status: 1,
                 message: "Successfully changed."

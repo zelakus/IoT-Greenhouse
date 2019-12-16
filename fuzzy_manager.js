@@ -160,13 +160,13 @@
         var anliktnem = Sensors['toprak_nemi'];
         var anlikisik = Sensors['isik'];
        
-        if(anliksicaklik != 0 && anliknem != 0)  	
-            global.Results['pumping_duration'] = havalandirma(anliksicaklik, anliknem);
+        if(SensorHas['sicaklik'] && SensorHas['hava_nemi'])  	
+            global.Results['servo_angle'] = havalandirma(anliksicaklik, anliknem);
         
-        if(anliknem != 0 && anliktnem != 0) 
-            global.Results['servo_angle'] = Sulama(anliknem,anliktnem);
+        if(SensorHas['hava_nemi'] && SensorHas['toprak_nemi']) 
+            global.Results['pumping_duration'] = Sulama(anliknem,anliktnem);
            
-        if(anlikisik != 0)
+        if(SensorHas['isik'])
             global.Results['light_amount'] = Isiklandirma(anlikisik);
     }
     

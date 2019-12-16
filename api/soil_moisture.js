@@ -14,14 +14,25 @@
                     message: "NaN"
                 });    
                 return;
-            } else if (moist < 1)
+            } else if (moist < 0)
+            {
+                moist = 0;
+            } else if (moist > 1024) {
+                moist = 1024;
+            }
+
+            //Convertion
+            moist = 100*(1024-moist)/1024;
+            if (moist < 1)
             {
                 moist = 1;
-            } else if (moist > 100) {
+            } else if (moist > 99) {
                 moist = 99;
             }
 
+            console.log('toprak nemi: ' + moist);
             global.Sensors['toprak_nemi'] = moist;
+            global.SensorHas['toprak_nemi'] = true;
             res.json({
                 status: 1,
                 message: "Successfully changed."

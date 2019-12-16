@@ -21,7 +21,9 @@
                 light = 19999;
             }
 
+            console.log('Isik: ' + light);
             global.Sensors['isik'] = light;
+            global.SensorHas['isik'] = true;
             res.json({
                 status: 1,
                 message: "Successfully changed."

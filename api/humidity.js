@@ -20,7 +20,9 @@
                 moist = 99;
             }
 
+            console.log('hava nemi: ' + moist);
             global.Sensors['hava_nemi'] = moist;
+            global.SensorHas['hava_nemi'] = true;
             res.json({
                 status: 1,
                 message: "Successfully changed."
