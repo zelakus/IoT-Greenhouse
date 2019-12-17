@@ -7,18 +7,28 @@ const app = express();
 let port = 80;
 
 global.Sensors = {
-    'sicaklik': 23,
-    'hava_nemi': 95,
-    'toprak_nemi': 90,
-    'isik': 0
+    'sicaklik': 0,
+    'hava_nemi': 1,
+    'toprak_nemi': 99,
+    'isik': 1
 };
 
 global.SensorHas = {
-    'sicaklik': true,
-    'hava_nemi': true,
-    'toprak_nemi': true,
+    'sicaklik': false,
+    'hava_nemi': false,
+    'toprak_nemi': false,
     'isik': false
 };
+
+
+global.OverwriteData = {
+    'sicaklik': 0,
+    'hava_nemi': 0,
+    'toprak_nemi': 0,
+    'isik': 0
+};
+
+global.Overwrite = false;
 
 global.Results = {
     'servo_angle': 0,
@@ -37,6 +47,20 @@ app.use(express.static('public'));
 api.Init(app);
 app.post('/login', (req, res) => {
     res.sendStatus(200);
+});
+
+app.get('/reset', (req, res) => {
+    Overwrite = false;
+    res.sendStatus(200);
+});
+
+app.get('/set', (req, res) => {
+    Overwrite = true;
+    res.sendStatus(200);
+});
+
+app.get('/overwrite', (req, res) => {
+    res.end(Overwrite.toString());
 });
 
 app.listen(port, () =>

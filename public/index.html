@@ -20,6 +20,84 @@
             width: 40%;
         }
     </style>
+    <script>
+        async function GetValue(key) {
+            return new Promise(function (resolve, reject) {
+                var xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == XMLHttpRequest.DONE)
+                        resolve(xhr.response);
+                }
+                xhr.onerror = function () {
+                    reject({
+                        status: this.status,
+                        statusText: xhr.statusText
+                    });
+                };
+
+                xhr.open('GET', '/' + key, true);
+                xhr.send();
+            });
+        }
+
+        function SetValue(key, value) {
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '/' + key);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xhr.send(value);
+         }
+
+        function refresh() {
+            GetValue('sicaklik').then((val) => { document.getElementsByName("sicaklik")[0].placeholder = val; });
+            GetValue('hava_nemi').then((val) => { document.getElementsByName("hava_nemi")[0].placeholder = val; });
+            GetValue('toprak_nemi').then((val) => { document.getElementsByName("toprak_nemi")[0].placeholder = val; });
+            GetValue('isik').then((val) => { document.getElementsByName("isik")[0].placeholder = val; });
+
+            document.getElementsByName("sicaklik")[0].value = "";
+            document.getElementsByName("hava_nemi")[0].value = "";
+            document.getElementsByName("toprak_nemi")[0].value = "";
+            document.getElementsByName("isik")[0].value = "";
+
+            GetValue('overwrite').then((val) => { document.getElementById('ignoreCheck').checked = (val == 'true'); });
+        }
+
+        function reset() {
+            document.getElementsByName("sicaklik")[0].value = "";
+            document.getElementsByName("hava_nemi")[0].value = "";
+            document.getElementsByName("toprak_nemi")[0].value = "";
+            document.getElementsByName("isik")[0].value = "";
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/reset');
+            xhr.send();
+            
+            document.getElementById('ignoreCheck').checked = false;
+        }
+
+        function refreshResults() {
+            GetValue('result').then((val) => {
+                var json = JSON.parse(val);
+                document.getElementById("servo_angle").innerHTML = json['servo_angle'];
+                document.getElementById("pumping_duration").innerHTML = json['pumping_duration'];
+                document.getElementById("light_amount").innerHTML = json['light_amount'];
+            });
+        }
+
+        function send() {
+            GetValue('set').then((v) => {
+                SetValue('ui_sicaklik', 'value=' + document.getElementsByName("sicaklik")[0].value);
+                SetValue('ui_hava_nemi', 'value=' + document.getElementsByName("hava_nemi")[0].value);
+                SetValue('ui_toprak_nemi', 'value=' + document.getElementsByName("toprak_nemi")[0].value);
+                SetValue('ui_isik', 'value=' + document.getElementsByName("isik")[0].value);
+            });
+        }
+
+        window.addEventListener('load', function () {
+            GetValue('overwrite').then((val) => { document.getElementById('ignoreCheck').checked = (val == 'true'); });
+            refresh();
+            refreshResults();
+        })
+    </script>
 </head>
 
 <body>
@@ -40,51 +118,75 @@
                     <h1 class="display-4">Akıllı sera</h1>
                     <p class="lead">IoT ve fuzzy logic ile hazırlanmıştır.</p>
                     <hr class="my-4">
-                    <p>Sensör verilerilerini veya cihaz için verilen görebilir </p>
-                    <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+                    <p>Sensör verilerileri ve sonuçlar görüntülenebilir. Sensör verilerinin üzerine yazılabilinir. </p>
+                    <a class="btn btn-primary btn-lg" href="https://github.com/zelakus/IoT-Greenhouse"
+                        role="button">GitHub</a>
                 </div>
             </div>
         </div>
         <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
             <div class="small-middle-container">
-                <form class="form-horizontal" action="/update" method="POST"></form>
 
-                <div class="form-group">
-                    <label class="control-label col-sm-2" for="email">Sıcaklık:</label>
-                    <div class="col-sm-10">
-                        <input class="form-control" type="text" name="sicaklik" placeholder="0">
-                    </div>
+                <div class="custom-control custom-checkbox" style="padding-top: 20px;">
+                    <input type="checkbox" class="custom-control-input" id="ignoreCheck">
+                    <label class="custom-control-label" for="customCheck1">Sensör verilerini görmezden gel</label>
                 </div>
 
-                <div class="form-group">
-                    <label class="control-label col-sm-2" for="email">Nem:</label>
-                    <div class="col-sm-10">
-                        <input class="form-control" type="text" name="hava_nemi" placeholder="0">
+                <form class="form-horizontal"></form>
+
+                <div class="input-group input-group-sm mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-sm">Sicaklik</span>
                     </div>
+                    <input type="text" class="form-control" aria-label="Small" name="sicaklik" placeholder="0"
+                        aria-describedby="inputGroup-sizing-sm">
                 </div>
 
-                <div class="form-group">
-                    <label class="control-label col-sm-2" for="email">Toprak Nemi:</label>
-                    <div class="col-sm-10">
-                        <input class="form-control" type="text" name="toprak_nemi" placeholder="0">
+                <div class="input-group input-group-sm mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-sm">Nem</span>
                     </div>
+                    <input type="text" class="form-control" aria-label="Small" name="hava_nemi" placeholder="0"
+                        aria-describedby="inputGroup-sizing-sm">
                 </div>
 
-                <div class="form-group">
-                    <label class="control-label col-sm-2" for="email">Işık:</label>
-                    <div class="col-sm-10">
-                        <input class="form-control" type="text" name="isik" placeholder="0">
+                <div class="input-group input-group-sm mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-sm">Toprak Nemi</span>
                     </div>
+                    <input type="text" class="form-control" aria-label="Small" name="toprak_nemi" placeholder="0"
+                        aria-describedby="inputGroup-sizing-sm">
                 </div>
-                <input type="submit" class="btn btn-primary float-right" name="submit" text="Güncelle"></input>
-                </form>
-                <div class="well">
-                    well
+
+                <div class="input-group input-group-sm mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-sm">Işık</span>
+                    </div>
+                    <input type="text" class="form-control" aria-label="Small" name="isik" placeholder="0"
+                        aria-describedby="inputGroup-sizing-sm">
                 </div>
+
+                <input type="submit" class="btn btn-primary float-right" name="submit" text="Güncelle" onclick="send()"></input>
+            </form>
+                <button class="btn btn-primary" onclick="reset()" name="reset">Temizle</button>
+                <button class="btn btn-primary" onclick="refresh()" name="refresh">Güncel verileri çek</button>
             </div>
         </div>
         <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
-            get
+            <div class="small-middle-container" style="padding: 20px;">
+                <ul class="list-group-flush">
+                    <li class="list-group-item">Havalandırma <span class="badge badge-secondary" id="servo_angle"
+                            style="padding: 8px; margin-left: 20px;">?</span></li>
+                    <li class="list-group-item">Sulama <span class="badge badge-secondary" id="pumping_duration"
+                            style="padding: 8px; margin-left: 20px;">?</span></li>
+                    <li class="list-group-item">Aydınlatma <span class="badge badge-secondary" id="light_amount"
+                            style="padding: 8px; margin-left: 20px;">?</span></li>
+                </ul>
+                <div class="col-sm-12 text-center">
+                    <button class="btn btn-primary" style="margin-top: 20px;" onclick="refreshResults()"
+                        name="refresh">Güncel verileri çek</button>
+                </div>
+            </div>
         </div>
     </div>
 </body>

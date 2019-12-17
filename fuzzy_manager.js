@@ -90,9 +90,9 @@
                 TNemList.push(i);
         }
 
-        for (var i=0;i<NemList.length;i++) {
-            for (var j=0; j<TNemList.length;j++){
-                toplamAgirlik += Math.min(Ucgen(anliknem,Nem[NemList[i]]),Ucgen(anliktnem,TNem[TNemList[j]]));
+        for (var i = 0;i < NemList.length; i++) {
+            for (var j = 0; j < TNemList.length; j++){
+                toplamAgirlik += Math.min(Ucgen(anliknem, Nem[NemList[i]]), Ucgen(anliktnem, TNem[TNemList[j]]));
                 toplam += Math.min(Ucgen(anliknem, Nem[NemList[i]]), Ucgen(anliktnem, TNem[TNemList[j]])) * Su[uyelikfonk[NemList[i]][TNemList[j]]].b;
              }
         }
@@ -100,7 +100,7 @@
         return toplam/toplamAgirlik;
 	}
 
-    function havalandirma(anliksicaklik, anliknem) {
+    function Havalandirma(anliksicaklik, anliknem) {
 		var Sicaklik=[
             new UcgenUyelik(-10,0,10),
             new UcgenUyelik(0, 7.5,15),
@@ -143,10 +143,10 @@
                 NemList.push(i);
         }
 
-        for (var i=0;i<SicaklikList.length;i++) {
-            for (var j=0; j<NemList.length;j++) {
-                toplamAgirlik+=Math.min(Ucgen(anliksicaklik,Sicaklik[SicaklikList[i]]),Ucgen(anliknem,Nem[NemList[j]]));
-                toplam+=Math.min(Ucgen(anliksicaklik,Sicaklik[SicaklikList[i]]),Ucgen(anliknem,Nem[NemList[j]])) * Fan[uyelikfonk[SicaklikList[i]][NemList[j]]].b;
+        for (var i = 0; i < SicaklikList.length; i++) {
+            for (var j = 0; j<NemList.length; j++) {
+                toplamAgirlik += Math.min(Ucgen(anliksicaklik,Sicaklik[SicaklikList[i]]), Ucgen(anliknem,Nem[NemList[j]]));
+                toplam += Math.min(Ucgen(anliksicaklik,Sicaklik[SicaklikList[i]]), Ucgen(anliknem,Nem[NemList[j]])) * Fan[uyelikfonk[SicaklikList[i]][NemList[j]]].b;
                }
         }
 
@@ -160,8 +160,15 @@
         var anliktnem = Sensors['toprak_nemi'];
         var anlikisik = Sensors['isik'];
        
+        if (Overwrite) {
+            anliksicaklik = OverwriteData['sicaklik'];
+            anliknem = OverwriteData['hava_nemi'];
+            anliktnem = OverwriteData['toprak_nemi'];
+            anlikisik = OverwriteData['isik'];
+        }
+
         if(SensorHas['sicaklik'] && SensorHas['hava_nemi'])  	
-            global.Results['servo_angle'] = havalandirma(anliksicaklik, anliknem);
+            global.Results['servo_angle'] = Havalandirma(anliksicaklik, anliknem);
         
         if(SensorHas['hava_nemi'] && SensorHas['toprak_nemi']) 
             global.Results['pumping_duration'] = Sulama(anliknem,anliktnem);

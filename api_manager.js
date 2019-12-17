@@ -4,7 +4,7 @@
         require('./api/humidity').Register(app);
         require('./api/soil_moisture').Register(app);
         require('./api/light').Register(app);
-        require('./api/tm_group').Register(app);
+        
         require('./api/results').Register(app);
     }
     
